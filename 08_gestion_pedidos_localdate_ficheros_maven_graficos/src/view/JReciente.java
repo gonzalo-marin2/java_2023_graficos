@@ -5,10 +5,16 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import service.PedidoService;
+
 import java.awt.Font;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class JReciente extends JFrame {
 
@@ -18,18 +24,7 @@ public class JReciente extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					JReciente frame = new JReciente();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+
 
 	/**
 	 * Create the frame.
@@ -61,21 +56,36 @@ public class JReciente extends JFrame {
 		contentPane.add(lblPrecio);
 		
 		JButton btSalir = new JButton("SALIR");
+		btSalir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int resp=JOptionPane.showConfirmDialog(JReciente.this, "¿Desea salir?","Cerrar sesión",JOptionPane.YES_NO_OPTION);//usamos this para cerrar la ventana
+				if(resp==JOptionPane.YES_OPTION) {
+					JReciente.this.dispose();
+				}
+			}
+		});
 		btSalir.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btSalir.setBounds(142, 208, 150, 30);
 		contentPane.add(btSalir);
 		
-		JLabel lbProducto = new JLabel("producto");
-		lbProducto.setBounds(270, 50, 120, 30);
+		JLabel lbProducto = new JLabel();
+		lbProducto.setBounds(270, 41, 120, 30);
 		contentPane.add(lbProducto);
 		
-		JLabel lbFecha = new JLabel("fecha");
+		JLabel lbFecha = new JLabel();
 		lbFecha.setBounds(270, 80, 120, 30);
 		contentPane.add(lbFecha);
 		
-		JLabel lbPrecio = new JLabel("precio");
+		JLabel lbPrecio = new JLabel();
 		lbPrecio.setBounds(270, 120, 120, 30);
 		contentPane.add(lbPrecio);
+
+		//cargar pedido más reciente al cargarse la propia ventana
+		var service=new PedidoService();
+		var pedido=service.pedidoMasReciente();
+		lbProducto.setText(pedido.getProducto());
+		lbFecha.setText(pedido.getFechaPedido().toString());
+		lbPrecio.setText(pedido.getPrecio()+"");
 	}
 
 }
